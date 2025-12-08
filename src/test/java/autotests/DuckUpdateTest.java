@@ -27,7 +27,7 @@ public class DuckUpdateTest extends TestNGCitrusSpringSupport {
     @Test
     @CitrusTest
     public void updateColorAndHeight(@Optional @CitrusResource TestCaseRunner runner) {
-        // Изменить цвет и высоту уточки
+        // Изменение цвета и высоты уточки
         duckUpdate(runner,"1","{\"color\":\"red\",\"height\":0.25}");
         runner.$(http()
                 .client("http://localhost:2222")
@@ -38,7 +38,7 @@ public class DuckUpdateTest extends TestNGCitrusSpringSupport {
     @Test
     @CitrusTest
     public void updateColorAndSound(@Optional @CitrusResource TestCaseRunner runner) {
-        // Изменить цвет и звук уточки
+        // Изменение цвета и звука уточки
         duckUpdate(runner,"1","{\"color\":\"blue\",\"sound\":\"quack-quack\"}");
         runner.$(http()
                 .client("http://localhost:2222")
