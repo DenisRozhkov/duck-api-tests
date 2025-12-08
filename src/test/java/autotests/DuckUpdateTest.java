@@ -13,19 +13,22 @@ import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
 public class DuckUpdateTest extends TestNGCitrusSpringSupport {
 
-    @Test
-    @CitrusTest
-    public void updateColorAndHeight(@Optional @CitrusResource TestCaseRunner runner) {
-        // Изменить цвет и высоту уточки
+    public void duckUpdate(TestCaseRunner runner, String id, String body) {
         runner.$(http()
                 .client("http://localhost:2222")
                 .send()
                 .put("/api/duck/update")
-                .queryParam("id", "1")
+                .queryParam("id", id)
                 .message()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body("{\"color\":\"red\",\"height\":0.25}"));
+                .body(body));
+    }
 
+    @Test
+    @CitrusTest
+    public void updateColorAndHeight(@Optional @CitrusResource TestCaseRunner runner) {
+        // Изменить цвет и высоту уточки
+        duckUpdate(runner,"1","{\"color\":\"red\",\"height\":0.25}");
         runner.$(http()
                 .client("http://localhost:2222")
                 .receive()
@@ -36,15 +39,7 @@ public class DuckUpdateTest extends TestNGCitrusSpringSupport {
     @CitrusTest
     public void updateColorAndSound(@Optional @CitrusResource TestCaseRunner runner) {
         // Изменить цвет и звук уточки
-        runner.$(http()
-                .client("http://localhost:2222")
-                .send()
-                .put("/api/duck/update")
-                .queryParam("id", "1")
-                .message()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body("{\"color\":\"blue\",\"sound\":\"quack-quack\"}"));
-
+        duckUpdate(runner,"1","{\"color\":\"blue\",\"sound\":\"quack-quack\"}");
         runner.$(http()
                 .client("http://localhost:2222")
                 .receive()
