@@ -1,6 +1,7 @@
 package autotests.clients;
 
 import autotests.EndpointConfig;
+import autotests.payloads.DuckMessage;
 import autotests.payloads.DuckProperties;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.http.client.HttpClient;
@@ -16,36 +17,19 @@ import org.springframework.test.context.ContextConfiguration;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
 @ContextConfiguration(classes = {EndpointConfig.class})
-public class DuckCreateClient extends TestNGCitrusSpringSupport {
+public class DuckFlyClient extends TestNGCitrusSpringSupport {
     @Autowired
     protected HttpClient duckService;
 
-    public void createDuck(TestCaseRunner runner, String color, double height, String material,
-                           String sound, String wingsState) {
+    public void duckFly(TestCaseRunner runner, String id) {
         runner.$(http()
                 .client(duckService)
                 .send()
-                .post("/api/duck/create")
-                .message()
-                .body("{\n" +
-                        "\"color\": \"" + color + "\",\n" +
-                        "\"height\": " + height + ",\n" +
-                        "\"material\": \"" + material + "\",\n" +
-                        "\"sound\": \"" + sound + "\",\n" +
-                        "\"wingsState\": \"" + wingsState + "\"\n" + "}"));
+                .get("/api/duck/action/fly")
+                .queryParam("id", id));
     }
 
-    public void createDuck(TestCaseRunner runner, DuckProperties duckProperties) {
-        runner.$(http()
-                .client(duckService)
-                .send()
-                .post("/api/duck/create")
-                .message()
-                .body(new ObjectMappingPayloadBuilder(duckProperties,
-                        new ObjectMapper())));
-    }
-
-    public void duckCreateValidate(TestCaseRunner runner, String message) {
+    public void duckFlyValidate(TestCaseRunner runner, String message) {
         runner.$(http()
                 .client(duckService)
                 .receive()
@@ -55,7 +39,18 @@ public class DuckCreateClient extends TestNGCitrusSpringSupport {
                 .body(message));
     }
 
-    public void duckCreateValidateJson(TestCaseRunner runner, String filePath) {
+    public void duckFlyValidate(TestCaseRunner runner, DuckMessage duckMessage) {
+        runner.$(http()
+                .client(duckService)
+                .receive()
+                .response(HttpStatus.OK)
+                .message()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(new ObjectMappingPayloadBuilder(duckMessage,
+                        new ObjectMapper())));
+    }
+
+    public void duckFlyValidateJson(TestCaseRunner runner, String filePath) {
         runner.$(http()
                 .client(duckService)
                 .receive()

@@ -1,5 +1,6 @@
 package autotests.tests;
 
+import autotests.clients.DuckDeleteClient;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
 import com.consol.citrus.annotations.CitrusTest;
@@ -10,20 +11,12 @@ import org.testng.annotations.Test;
 
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
-public class DuckDeleteTest extends TestNGCitrusSpringSupport {
+public class DuckDeleteTest extends DuckDeleteClient {
 
     @Test
     @CitrusTest
     public void deleteDuck(@Optional @CitrusResource TestCaseRunner runner) {
-        runner.$(http()
-                .client("http://localhost:2222")
-                .send()
-                .delete("/api/duck/delete")
-                .queryParam("id", "1"));
-
-        runner.$(http()
-                .client("http://localhost:2222")
-                .receive()
-                .response(HttpStatus.OK));
+        deleteDuck(runner, "1");
+        deleteDuckValidate(runner);
     }
 }

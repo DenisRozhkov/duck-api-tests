@@ -1,7 +1,7 @@
 package autotests.clients;
 
 import autotests.EndpointConfig;
-import autotests.payloads.DuckProperties;
+import autotests.payloads.DuckMessage;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.http.client.HttpClient;
 import com.consol.citrus.message.builder.ObjectMappingPayloadBuilder;
@@ -16,46 +16,40 @@ import org.springframework.test.context.ContextConfiguration;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
 @ContextConfiguration(classes = {EndpointConfig.class})
-public class DuckCreateClient extends TestNGCitrusSpringSupport {
+public class DuckSwimClient extends TestNGCitrusSpringSupport {
     @Autowired
     protected HttpClient duckService;
 
-    public void createDuck(TestCaseRunner runner, String color, double height, String material,
-                           String sound, String wingsState) {
+    public void duckSwim(TestCaseRunner runner, String id) {
         runner.$(http()
                 .client(duckService)
                 .send()
-                .post("/api/duck/create")
-                .message()
-                .body("{\n" +
-                        "\"color\": \"" + color + "\",\n" +
-                        "\"height\": " + height + ",\n" +
-                        "\"material\": \"" + material + "\",\n" +
-                        "\"sound\": \"" + sound + "\",\n" +
-                        "\"wingsState\": \"" + wingsState + "\"\n" + "}"));
+                .get("/api/duck/action/swim")
+                .queryParam("id", id));
     }
 
-    public void createDuck(TestCaseRunner runner, DuckProperties duckProperties) {
-        runner.$(http()
-                .client(duckService)
-                .send()
-                .post("/api/duck/create")
-                .message()
-                .body(new ObjectMappingPayloadBuilder(duckProperties,
-                        new ObjectMapper())));
-    }
-
-    public void duckCreateValidate(TestCaseRunner runner, String message) {
+    public void duckSwimValidate(TestCaseRunner runner, String body) {
         runner.$(http()
                 .client(duckService)
                 .receive()
                 .response(HttpStatus.OK)
                 .message()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(message));
+                .body(body));
     }
 
-    public void duckCreateValidateJson(TestCaseRunner runner, String filePath) {
+    public void duckSwimValidate(TestCaseRunner runner, DuckMessage duckMessage) {
+        runner.$(http()
+                .client(duckService)
+                .receive()
+                .response(HttpStatus.OK)
+                .message()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(new ObjectMappingPayloadBuilder(duckMessage,
+                        new ObjectMapper())));
+    }
+
+    public void duckSwimValidateJson(TestCaseRunner runner, String filePath) {
         runner.$(http()
                 .client(duckService)
                 .receive()

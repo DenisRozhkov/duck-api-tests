@@ -1,5 +1,8 @@
 package autotests.tests;
 
+import autotests.clients.DuckFlyClient;
+import autotests.payloads.DuckMessage;
+import autotests.payloads.DuckProperties;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
 import com.consol.citrus.annotations.CitrusTest;
@@ -11,32 +14,16 @@ import org.testng.annotations.Test;
 
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
-public class DuckFlyTest extends TestNGCitrusSpringSupport {
-
-    public void duckFly(TestCaseRunner runner, String id) {
-        runner.$(http()
-                .client("http://localhost:2222")
-                .send()
-                .get("/api/duck/action/fly")
-                .queryParam("id", id));
-    }
-
-    public void duckFlyValidate(TestCaseRunner runner, String message) {
-        runner.$(http()
-                .client("http://localhost:2222")
-                .receive()
-                .response(HttpStatus.OK)
-                .message()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(message));
-    }
+public class DuckFlyTest extends DuckFlyClient {
 
     @Test
     @CitrusTest
     public void flyWithActiveWings(@Optional @CitrusResource TestCaseRunner runner) {
         // Существующий id с активными крыльями
+        DuckMessage duckMessage = new DuckMessage();
+        duckMessage.setMessage("I'm flying");
         duckFly(runner, "1");
-        duckFlyValidate(runner,"{\"message\":\"I'm flying\"}");
+        duckFlyValidate(runner,duckMessage);
 
     }
 
