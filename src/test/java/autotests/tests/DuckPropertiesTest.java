@@ -1,4 +1,4 @@
-package autotests;
+package autotests.tests;
 
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
@@ -11,17 +11,15 @@ import org.testng.annotations.Test;
 
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
-public class DuckSwimTest extends TestNGCitrusSpringSupport {
-
-    public void duckSwim(TestCaseRunner runner, String id) {
+public class DuckPropertiesTest extends TestNGCitrusSpringSupport {
+    public void duckProperties(TestCaseRunner runner, String id) {
         runner.$(http()
                 .client("http://localhost:2222")
                 .send()
-                .get("/api/duck/action/swim")
-                .queryParam("id", id));
+                .get(id));
     }
 
-    public void duckSwimValidate(TestCaseRunner runner, String body) {
+    public void duckPropertiesValidate(TestCaseRunner runner, String body) {
         runner.$(http()
                 .client("http://localhost:2222")
                 .receive()
@@ -30,20 +28,19 @@ public class DuckSwimTest extends TestNGCitrusSpringSupport {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(body));
     }
-
     @Test
     @CitrusTest
-    public void swimExistingId(@Optional @CitrusResource TestCaseRunner runner) {
-        // Существующий id
-        duckSwim(runner,"1");
-        duckSwimValidate(runner,"{\"message\":\"I'm swimming\"}");
+    public void getWoodDuckPropertiesEvenId(@Optional @CitrusResource TestCaseRunner runner) {
+        // Четный ID: утка с material = wood
+        duckProperties(runner,"2");
+        duckPropertiesValidate(runner,"{\"material\":\"wood\"}");
     }
 
     @Test
     @CitrusTest
-    public void swimNonExistingId(@Optional @CitrusResource TestCaseRunner runner) {
-        // Несуществующий id
-        duckSwim(runner,"999");
-        duckSwimValidate(runner,"");
+    public void getRubberDuckPropertiesOddId(@Optional @CitrusResource TestCaseRunner runner) {
+        // Нечетный ID: утка с material = rubber
+        duckProperties(runner,"1");
+        duckPropertiesValidate(runner,"{\"material\":\"rubber\"}");
     }
 }
