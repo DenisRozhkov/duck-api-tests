@@ -5,14 +5,13 @@ import autotests.payloads.DuckProperties;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
 import com.consol.citrus.annotations.CitrusTest;
-import com.consol.citrus.testng.spring.TestNGCitrusSpringSupport;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Test;
 
-import static com.consol.citrus.http.actions.HttpActionBuilder.http;
-
+@Epic("Тесты на duck-controller")
+@Feature("Создание уточки")
 public class DuckCreateTest extends DuckCreateClient {
     @Test(description = "Создание утки с material = rubber ")
     @CitrusTest
@@ -25,6 +24,7 @@ public class DuckCreateTest extends DuckCreateClient {
         duckProperties.setWingsState("ACTIVE");
         createDuck(runner, duckProperties);
         duckCreateValidateJson(runner, "duckCreateTest/duckYellow.json");
+        validateDuckInDatabase(runner,"${duckId}","yellow","0.15","rubber","quack","ACTIVE");
     }
 
 }

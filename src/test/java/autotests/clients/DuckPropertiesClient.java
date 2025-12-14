@@ -7,12 +7,15 @@ import com.consol.citrus.http.client.HttpClient;
 import com.consol.citrus.message.builder.ObjectMappingPayloadBuilder;
 import com.consol.citrus.testng.spring.TestNGCitrusSpringSupport;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.qameta.allure.Step;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.test.context.ContextConfiguration;
 
+import static com.consol.citrus.actions.ExecuteSQLAction.Builder.sql;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
 @ContextConfiguration(classes = {EndpointConfig.class})
@@ -20,6 +23,10 @@ public class DuckPropertiesClient extends TestNGCitrusSpringSupport {
     @Autowired
     protected HttpClient duckService;
 
+    @Autowired
+    protected SingleConnectionDataSource testDb;
+
+    @Step("Запрос свойств уточки")
     public void duckProperties(TestCaseRunner runner, String id) {
         runner.$(http()
                 .client(duckService)
@@ -27,6 +34,7 @@ public class DuckPropertiesClient extends TestNGCitrusSpringSupport {
                 .get(id));
     }
 
+    @Step("Проверяем ответ")
     public void duckPropertiesValidate(TestCaseRunner runner, String body) {
         runner.$(http()
                 .client(duckService)
@@ -37,6 +45,7 @@ public class DuckPropertiesClient extends TestNGCitrusSpringSupport {
                 .body(body));
     }
 
+    @Step("Проверяем ответ")
     public void duckPropertiesValidate(TestCaseRunner runner, DuckProperties duckProperties) {
         runner.$(http()
                 .client(duckService)
@@ -48,6 +57,7 @@ public class DuckPropertiesClient extends TestNGCitrusSpringSupport {
                         new ObjectMapper())));
     }
 
+    @Step("Проверяем ответ")
     public void duckPropertiesValidateJson(TestCaseRunner runner, String filePath) {
         runner.$(http()
                 .client(duckService)
@@ -56,5 +66,11 @@ public class DuckPropertiesClient extends TestNGCitrusSpringSupport {
                 .message()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(new ClassPathResource(filePath)));
+    }
+
+    @Step("Обновляем БД")
+    public void databaseUpdate(TestCaseRunner runner, String sql) {
+        runner.$(sql(testDb)
+                .statement(sql));
     }
 }
