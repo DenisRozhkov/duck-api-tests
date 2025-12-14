@@ -1,5 +1,6 @@
 package autotests.clients;
 
+import autotests.BaseTest;
 import autotests.EndpointConfig;
 import autotests.payloads.DuckMessage;
 import autotests.payloads.DuckProperties;
@@ -20,7 +21,7 @@ import static com.consol.citrus.actions.ExecuteSQLAction.Builder.sql;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
 @ContextConfiguration(classes = {EndpointConfig.class})
-public class DuckFlyClient extends TestNGCitrusSpringSupport {
+public class DuckFlyClient extends BaseTest {
     @Autowired
     protected HttpClient duckService;
 
@@ -29,45 +30,22 @@ public class DuckFlyClient extends TestNGCitrusSpringSupport {
 
     @Step("Метод полета")
     public void duckFly(TestCaseRunner runner, String id) {
-        runner.$(http()
-                .client(duckService)
-                .send()
-                .get("/api/duck/action/fly")
-                .queryParam("id", id));
+        sendGetRequest(runner,id,"/api/duck/action/fly");
     }
 
     @Step("Проверяем ответ")
     public void duckFlyValidate(TestCaseRunner runner, String message) {
-        runner.$(http()
-                .client(duckService)
-                .receive()
-                .response(HttpStatus.OK)
-                .message()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(message));
+        validate(runner, message);
     }
 
     @Step("Проверяем ответ")
     public void duckFlyValidate(TestCaseRunner runner, DuckMessage duckMessage) {
-        runner.$(http()
-                .client(duckService)
-                .receive()
-                .response(HttpStatus.OK)
-                .message()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(new ObjectMappingPayloadBuilder(duckMessage,
-                        new ObjectMapper())));
+        validate(runner, duckMessage);
     }
 
     @Step("Проверяем ответ")
     public void duckFlyValidateJson(TestCaseRunner runner, String filePath) {
-        runner.$(http()
-                .client(duckService)
-                .receive()
-                .response(HttpStatus.OK)
-                .message()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(new ClassPathResource(filePath)));
+        validateJson(runner,filePath);
     }
 
     @Step("Обновляем БД")

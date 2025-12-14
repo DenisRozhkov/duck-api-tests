@@ -1,5 +1,6 @@
 package autotests.clients;
 
+import autotests.BaseTest;
 import autotests.EndpointConfig;
 import autotests.payloads.DuckProperties;
 import com.consol.citrus.TestCaseRunner;
@@ -21,7 +22,7 @@ import static com.consol.citrus.dsl.MessageSupport.MessageBodySupport.fromBody;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
 @ContextConfiguration(classes = {EndpointConfig.class})
-public class DuckCreateClient extends TestNGCitrusSpringSupport {
+public class DuckCreateClient extends BaseTest {
     @Autowired
     protected HttpClient duckService;
 
@@ -57,26 +58,12 @@ public class DuckCreateClient extends TestNGCitrusSpringSupport {
 
     @Step("Проверяем ответ")
     public void duckCreateValidate(TestCaseRunner runner, String message) {
-        runner.$(http()
-                .client(duckService)
-                .receive()
-                .response(HttpStatus.OK)
-                .message()
-                .extract(fromBody().expression("$.id", "duckId"))
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(message));
+        validate(runner,message);
     }
 
     @Step("Проверяем ответ")
     public void duckCreateValidateJson(TestCaseRunner runner, String filePath) {
-        runner.$(http()
-                .client(duckService)
-                .receive()
-                .response(HttpStatus.OK)
-                .message()
-                .extract(fromBody().expression("$.id", "duckId"))
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(new ClassPathResource(filePath)));
+        validateJson(runner,filePath);
     }
 
     @Step("Проверяем БД")

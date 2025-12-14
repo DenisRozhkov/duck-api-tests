@@ -1,5 +1,6 @@
 package autotests.clients;
 
+import autotests.BaseTest;
 import autotests.EndpointConfig;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.http.client.HttpClient;
@@ -15,7 +16,7 @@ import static com.consol.citrus.actions.ExecuteSQLQueryAction.Builder.query;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
 @ContextConfiguration(classes = {EndpointConfig.class})
-public class DuckDeleteClient extends TestNGCitrusSpringSupport {
+public class DuckDeleteClient extends BaseTest {
     @Autowired
     protected HttpClient duckService;
 
@@ -32,11 +33,8 @@ public class DuckDeleteClient extends TestNGCitrusSpringSupport {
     }
 
     @Step("Проверяем ответ")
-    public void deleteDuckValidate(TestCaseRunner runner){
-        runner.$(http()
-                .client(duckService)
-                .receive()
-                .response(HttpStatus.OK));
+    public void deleteDuckValidate(TestCaseRunner runner, String message){
+        validate(runner,message);
     }
 
     @Step("Обновляем БД")

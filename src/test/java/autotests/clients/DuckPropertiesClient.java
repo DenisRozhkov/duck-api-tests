@@ -1,5 +1,6 @@
 package autotests.clients;
 
+import autotests.BaseTest;
 import autotests.EndpointConfig;
 import autotests.payloads.DuckProperties;
 import com.consol.citrus.TestCaseRunner;
@@ -19,7 +20,7 @@ import static com.consol.citrus.actions.ExecuteSQLAction.Builder.sql;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
 @ContextConfiguration(classes = {EndpointConfig.class})
-public class DuckPropertiesClient extends TestNGCitrusSpringSupport {
+public class DuckPropertiesClient extends BaseTest {
     @Autowired
     protected HttpClient duckService;
 
@@ -28,21 +29,12 @@ public class DuckPropertiesClient extends TestNGCitrusSpringSupport {
 
     @Step("Запрос свойств уточки")
     public void duckProperties(TestCaseRunner runner, String id) {
-        runner.$(http()
-                .client(duckService)
-                .send()
-                .get(id));
+        sendGetRequest(runner, id, "/api/duck/action/properties");
     }
 
     @Step("Проверяем ответ")
     public void duckPropertiesValidate(TestCaseRunner runner, String body) {
-        runner.$(http()
-                .client(duckService)
-                .receive()
-                .response(HttpStatus.OK)
-                .message()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(body));
+        validate(runner, body);
     }
 
     @Step("Проверяем ответ")
@@ -59,13 +51,7 @@ public class DuckPropertiesClient extends TestNGCitrusSpringSupport {
 
     @Step("Проверяем ответ")
     public void duckPropertiesValidateJson(TestCaseRunner runner, String filePath) {
-        runner.$(http()
-                .client(duckService)
-                .receive()
-                .response(HttpStatus.OK)
-                .message()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(new ClassPathResource(filePath)));
+        validateJson(runner, filePath);
     }
 
     @Step("Обновляем БД")

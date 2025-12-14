@@ -1,13 +1,11 @@
 package autotests.clients;
 
+import autotests.BaseTest;
 import autotests.EndpointConfig;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.http.client.HttpClient;
-import com.consol.citrus.testng.spring.TestNGCitrusSpringSupport;
 import io.qameta.allure.Step;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -16,7 +14,7 @@ import static com.consol.citrus.actions.ExecuteSQLQueryAction.Builder.query;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
 @ContextConfiguration(classes = {EndpointConfig.class})
-public class DuckUpdateClient extends TestNGCitrusSpringSupport {
+public class DuckUpdateClient extends BaseTest {
     @Autowired
     protected HttpClient duckService;
 
@@ -37,13 +35,7 @@ public class DuckUpdateClient extends TestNGCitrusSpringSupport {
 
     @Step("Проверяем ответ")
     public void duckUpdateValidate(TestCaseRunner runner, String body) {
-        runner.$(http()
-                .client(duckService)
-                .receive()
-                .response(HttpStatus.OK)
-                .message()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(body));
+        validate(runner, body);
     }
 
     @Step("Обновляем БД")
@@ -57,10 +49,10 @@ public class DuckUpdateClient extends TestNGCitrusSpringSupport {
                                           String material, String sound, String wingsState) {
         runner.$(query(testDb)
                 .statement("SELECT * FROM DUCK WHERE ID=" + id)
-                .validate("COLOR",color)
-                .validate("HEIGHT",height)
-                .validate("MATERIAL",material)
-                .validate("SOUND",sound)
-                .validate("WINGS_STATE",wingsState));
+                .validate("COLOR", color)
+                .validate("HEIGHT", height)
+                .validate("MATERIAL", material)
+                .validate("SOUND", sound)
+                .validate("WINGS_STATE", wingsState));
     }
 }

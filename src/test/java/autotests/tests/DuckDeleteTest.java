@@ -25,7 +25,7 @@ public class DuckDeleteTest extends DuckDeleteClient {
                 "insert into DUCK (id, color, height, material, sound, wings_state)\n" +
                         "values (${duckId}, 'orange', 3.0, 'cheese', 'hrum','ACTIVE');");
         deleteDuck(runner, "${duckId}");
-        deleteDuckValidate(runner);
+        deleteDuckValidate(runner,"{\"message\":\"Duck with id = 1 is deleted\"}");
         validateCountInDatabase(runner,"${duckId}","0");
     }
 }

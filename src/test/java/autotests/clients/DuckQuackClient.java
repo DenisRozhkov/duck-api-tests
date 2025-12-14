@@ -1,5 +1,6 @@
 package autotests.clients;
 
+import autotests.BaseTest;
 import autotests.EndpointConfig;
 import autotests.payloads.DuckMessage;
 import autotests.payloads.DuckSound;
@@ -20,7 +21,7 @@ import static com.consol.citrus.actions.ExecuteSQLAction.Builder.sql;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
 @ContextConfiguration(classes = {EndpointConfig.class})
-public class DuckQuackClient extends TestNGCitrusSpringSupport {
+public class DuckQuackClient extends BaseTest {
     @Autowired
     protected HttpClient duckService;
 
@@ -39,13 +40,7 @@ public class DuckQuackClient extends TestNGCitrusSpringSupport {
 
     @Step("Проверяем ответ")
     public void duckQuackValidate(TestCaseRunner runner, String body) {
-        runner.$(http()
-                .client(duckService)
-                .receive()
-                .response(HttpStatus.OK)
-                .message()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(body));
+        validate(runner,body);
     }
 
     @Step("Проверяем ответ")
@@ -62,13 +57,7 @@ public class DuckQuackClient extends TestNGCitrusSpringSupport {
 
     @Step("Проверяем ответ")
     public void duckQuackValidateJson(TestCaseRunner runner, String filePath) {
-        runner.$(http()
-                .client(duckService)
-                .receive()
-                .response(HttpStatus.OK)
-                .message()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(new ClassPathResource(filePath)));
+       validateJson(runner,filePath);
     }
 
     @Step("Обновляем БД")
