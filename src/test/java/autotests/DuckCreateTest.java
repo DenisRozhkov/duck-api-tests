@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Test;
 
+import static com.consol.citrus.dsl.MessageSupport.MessageBodySupport.fromBody;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
 public class DuckCreateTest extends TestNGCitrusSpringSupport {
@@ -17,6 +18,14 @@ public class DuckCreateTest extends TestNGCitrusSpringSupport {
     public void createMaterialRubber(@Optional @CitrusResource TestCaseRunner runner) {
         createDuck(runner, "yellow", 0.15, "rubber", "quack", "ACTIVE");
         duckCreateValidate(runner, "{\n"
+                + "  \"color\": \"" + "yellow" + "\",\n"
+                + "  \"height\": " + 0.15 + ",\n"
+                + "  \"material\": \"" + "rubber" + "\",\n"
+                + "  \"sound\": \"" + "quack" + "\",\n"
+                + "  \"wingsState\": \"" + "ACTIVE"
+                + "\"\n" + "}");
+        duckProperties(runner,"${duckId}");
+        duckPropertiesValidate(runner,"{\n"
                 + "  \"color\": \"" + "yellow" + "\",\n"
                 + "  \"height\": " + 0.15 + ",\n"
                 + "  \"material\": \"" + "rubber" + "\",\n"
@@ -45,7 +54,25 @@ public class DuckCreateTest extends TestNGCitrusSpringSupport {
                 .receive()
                 .response(HttpStatus.OK)
                 .message()
+                .extract(fromBody().expression("$.id", "duckId"))
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(message));
+    }
+
+    public void duckProperties(TestCaseRunner runner, String id) {
+        runner.$(http()
+                .client("http://localhost:2222")
+                .send()
+                .get(id));
+    }
+
+    public void duckPropertiesValidate(TestCaseRunner runner, String body) {
+        runner.$(http()
+                .client("http://localhost:2222")
+                .receive()
+                .response(HttpStatus.OK)
+                .message()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(body));
     }
 }

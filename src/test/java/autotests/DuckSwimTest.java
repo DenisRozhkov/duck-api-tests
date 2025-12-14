@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Test;
 
+import static com.consol.citrus.dsl.MessageSupport.MessageBodySupport.fromBody;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
 public class DuckSwimTest extends TestNGCitrusSpringSupport {
@@ -31,11 +32,37 @@ public class DuckSwimTest extends TestNGCitrusSpringSupport {
                 .body(body));
     }
 
+    public void createDuck(TestCaseRunner runner, String color, double height, String material,
+                           String sound, String wingsState) {
+        runner.$(http()
+                .client("http://localhost:2222")
+                .send()
+                .post("/api/duck/create")
+                .message()
+                .body("{\n" +
+                        "\"color\": \"" + color + "\",\n" +
+                        "\"height\": " + height + ",\n" +
+                        "\"material\": \"" + material + "\",\n" +
+                        "\"sound\": \"" + sound + "\",\n" +
+                        "\"wingsState\": \"" + wingsState + "\"\n" + "}"));
+    }
+
+    public void extractId(TestCaseRunner runner) {
+        runner.$(http()
+                .client("http://localhost:2222")
+                .receive()
+                .response(HttpStatus.OK)
+                .message()
+                .extract(fromBody().expression("$.id", "duckId")));
+    }
+
     @Test
     @CitrusTest
     public void swimExistingId(@Optional @CitrusResource TestCaseRunner runner) {
         // Существующий id
-        duckSwim(runner,"1");
+        createDuck(runner, "yellow", 0.15, "rubber", "quack", "ACTIVE");
+        extractId(runner);
+        duckSwim(runner,"${duckId}");
         duckSwimValidate(runner,"{\"message\":\"I'm swimming\"}");
     }
 
@@ -44,6 +71,6 @@ public class DuckSwimTest extends TestNGCitrusSpringSupport {
     public void swimNonExistingId(@Optional @CitrusResource TestCaseRunner runner) {
         // Несуществующий id
         duckSwim(runner,"999");
-        duckSwimValidate(runner,"");
+        duckSwimValidate(runner,"{\"message\":\"Duck with id = 999 is not found\"}");
     }
 }
