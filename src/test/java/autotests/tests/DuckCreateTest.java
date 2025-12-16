@@ -13,7 +13,7 @@ import org.testng.annotations.Test;
 @Epic("Тесты на duck-controller")
 @Feature("Создание уточки")
 public class DuckCreateTest extends DuckCreateClient {
-    @Test(description = "Создание утки с material = rubber ")
+    @Test(description = "Создание утки с material = rubber")
     @CitrusTest
     public void createMaterialRubber(@Optional @CitrusResource TestCaseRunner runner) {
         DuckProperties duckProperties = new DuckProperties();
@@ -25,6 +25,26 @@ public class DuckCreateTest extends DuckCreateClient {
         createDuck(runner, duckProperties);
         duckCreateValidateJson(runner, "duckCreateTest/duckYellow.json");
         validateDuckInDatabase(runner,"${duckId}","yellow","0.15","rubber","quack","ACTIVE");
+    }
+
+    @Test(description = "Создание утки с material = wood")
+    @CitrusTest
+    public void createMaterialWood(@Optional @CitrusResource TestCaseRunner runner) {
+        DuckProperties duckProperties = new DuckProperties();
+        duckProperties.setColor("yellow");
+        duckProperties.setHeight(0.15);
+        duckProperties.setMaterial("wood");
+        duckProperties.setSound("quack");
+        duckProperties.setWingsState("ACTIVE");
+        createDuck(runner, duckProperties);
+        duckCreateValidateJson(runner,  "{\n"
+                + "  \"color\": \"" + "yellow" + "\",\n"
+                + "  \"height\": " + 0.15 + ",\n"
+                + "  \"material\": \"" + "wood" + "\",\n"
+                + "  \"sound\": \"" + "quack" + "\",\n"
+                + "  \"wingsState\": \"" + "ACTIVE"
+                + "\"\n" + "}");
+        validateDuckInDatabase(runner,"${duckId}","yellow","0.15","wood","quack","ACTIVE");
     }
 
 }

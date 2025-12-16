@@ -37,7 +37,7 @@ public class DuckCreateClient extends BaseTest {
                 .send()
                 .post("/api/duck/create")
                 .message()
-                .contentType("application/json")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body("{\n" +
                         "\"color\": \"" + color + "\",\n" +
                         "\"height\": " + height + ",\n" +
@@ -53,7 +53,7 @@ public class DuckCreateClient extends BaseTest {
                 .send()
                 .post("/api/duck/create")
                 .message()
-                .contentType("application/json")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(new ObjectMappingPayloadBuilder(duckProperties,
                         new ObjectMapper())));
     }
