@@ -58,7 +58,7 @@ public class DuckCreateTest extends DuckCreateClient {
         duckPropertiesValidate(runner,"{\n"
                 + "  \"color\": \"" + "yellow" + "\",\n"
                 + "  \"height\": " + 0.15 + ",\n"
-                + "  \"material\": \"" + "rubber" + "\",\n"
+                + "  \"material\": \"" + "wood" + "\",\n"
                 + "  \"sound\": \"" + "quack" + "\",\n"
                 + "  \"wingsState\": \"" + "ACTIVE"
                 + "\"\n" + "}");
