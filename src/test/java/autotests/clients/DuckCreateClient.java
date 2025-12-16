@@ -37,6 +37,7 @@ public class DuckCreateClient extends BaseTest {
                 .send()
                 .post("/api/duck/create")
                 .message()
+                .contentType("application/json")
                 .body("{\n" +
                         "\"color\": \"" + color + "\",\n" +
                         "\"height\": " + height + ",\n" +
@@ -52,18 +53,19 @@ public class DuckCreateClient extends BaseTest {
                 .send()
                 .post("/api/duck/create")
                 .message()
+                .contentType("application/json")
                 .body(new ObjectMappingPayloadBuilder(duckProperties,
                         new ObjectMapper())));
     }
 
     @Step("Проверяем ответ")
     public void duckCreateValidate(TestCaseRunner runner, String message) {
-        validate(runner,message);
+        validate(runner, message);
     }
 
     @Step("Проверяем ответ")
     public void duckCreateValidateJson(TestCaseRunner runner, String filePath) {
-        validateJson(runner,filePath);
+        validateJson(runner, filePath);
     }
 
     @Step("Проверяем БД")
@@ -71,11 +73,11 @@ public class DuckCreateClient extends BaseTest {
                                           String material, String sound, String wingsState) {
         runner.$(query(testDb)
                 .statement("SELECT * FROM DUCK WHERE ID=" + id)
-                .validate("COLOR",color)
-                .validate("HEIGHT",height)
-                .validate("MATERIAL",material)
-                .validate("SOUND",sound)
-                .validate("WINGS_STATE",wingsState));
+                .validate("COLOR", color)
+                .validate("HEIGHT", height)
+                .validate("MATERIAL", material)
+                .validate("SOUND", sound)
+                .validate("WINGS_STATE", wingsState));
     }
 
     @Step("Обновляем БД")
