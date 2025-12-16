@@ -13,15 +13,19 @@ public class DuckUpdateTest extends DuckUpdateClient {
     @CitrusTest
     public void updateColorAndHeight(@Optional @CitrusResource TestCaseRunner runner) {
         // Изменение цвета и высоты уточки
-        duckUpdate(runner,"1","{\"color\":\"red\",\"height\":0.25}");
-        duckUpdateValidate(runner);
+        createDuck(runner, "yellow", 0.15, "rubber", "quack", "ACTIVE");
+        extractId(runner);
+        duckUpdate(runner,"${duckId}","10","blue","rubber","quack");
+        duckUpdateValidate(runner,"{\"message\":\"Duck with id = " + "${duckId}" + " is updated\"}");
     }
 
     @Test
     @CitrusTest
     public void updateColorAndSound(@Optional @CitrusResource TestCaseRunner runner) {
         // Изменение цвета и звука уточки
-        duckUpdate(runner,"1","{\"color\":\"blue\",\"sound\":\"quack-quack\"}");
-        duckUpdateValidate(runner);
+        createDuck(runner, "yellow", 0.15, "rubber", "quack", "ACTIVE");
+        extractId(runner);
+        duckUpdate(runner,"${duckId}","0.15","blue","rubber","krya");
+        duckUpdateValidate(runner,"{\"message\":\"Duck with id = " + "${duckId}" + " is updated\"}");
     }
 }

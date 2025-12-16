@@ -13,15 +13,18 @@ public class DuckSwimTest extends DuckSwimClient {
     @CitrusTest
     public void swimExistingId(@Optional @CitrusResource TestCaseRunner runner) {
         // Существующий id
-        duckSwim(runner,"1");
-        duckSwimValidate(runner,"{\"message\":\"I'm swimming\"}");
+        createDuck(runner, "yellow", 0.15, "rubber", "quack", "ACTIVE");
+        extractId(runner);
+        duckSwim(runner, "${duckId}");
+        duckSwimValidate(runner, "{\"message\":\"I'm swimming\"}");
     }
 
     @Test
     @CitrusTest
     public void swimNonExistingId(@Optional @CitrusResource TestCaseRunner runner) {
         // Несуществующий id
-        duckSwim(runner,"999");
-        duckSwimValidate(runner,"");
+        deleteDuck(runner, "2");
+        duckSwim(runner, "2");
+        duckSwimValidate(runner, "{\"message\":\"Duck with id = 2 is not found\"}");
     }
 }

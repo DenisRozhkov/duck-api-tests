@@ -20,9 +20,11 @@ public class DuckFlyTest extends DuckFlyClient {
     @CitrusTest
     public void flyWithActiveWings(@Optional @CitrusResource TestCaseRunner runner) {
         // Существующий id с активными крыльями
+        createDuck(runner, "yellow", 0.15, "rubber", "quack", "ACTIVE");
+        extractId(runner);
         DuckMessage duckMessage = new DuckMessage();
         duckMessage.setMessage("I'm flying");
-        duckFly(runner, "1");
+        duckFly(runner, "${duckId}");
         duckFlyValidate(runner,duckMessage);
 
     }
@@ -31,15 +33,19 @@ public class DuckFlyTest extends DuckFlyClient {
     @CitrusTest
     public void flyWithFixedWings(@Optional @CitrusResource TestCaseRunner runner) {
         // Существующий id со связанными крыльями
-        duckFly(runner, "2");
-        duckFlyValidate(runner,"{\"message\":\"The wings were not found :(\"}");
+        createDuck(runner, "yellow", 0.15, "rubber", "quack", "FIXED");
+        extractId(runner);
+        duckFly(runner, "${duckId}");
+        duckFlyValidate(runner,"{\"message\":\"I can't fly\"}");
     }
 
     @Test
     @CitrusTest
     public void flyWithUndefinedWings(@Optional @CitrusResource TestCaseRunner runner) {
         // Существующий id с крыльями в неопределенном состоянии
-        duckFly(runner, "3");
-        duckFlyValidate(runner,"{\"message\":\"The wings were not found :(\"}");
+        createDuck(runner, "yellow", 0.15, "rubber", "quack", "UNDEFINED");
+        extractId(runner);
+        duckFly(runner, "${duckId}");
+        duckFlyValidate(runner,"{\"message\":\"Wings are not detected\"}");
     }
 }

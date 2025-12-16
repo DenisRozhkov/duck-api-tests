@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 
+import static com.consol.citrus.dsl.MessageSupport.MessageBodySupport.fromBody;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
 @ContextConfiguration(classes = {EndpointConfig.class})
@@ -57,5 +58,38 @@ public class DuckSwimClient extends TestNGCitrusSpringSupport {
                 .message()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(new ClassPathResource(filePath)));
+    }
+
+    public void createDuck(TestCaseRunner runner, String color, double height, String material,
+                           String sound, String wingsState) {
+        runner.$(http()
+                .client(duckService)
+                .send()
+                .post("/api/duck/create")
+                .message()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body("{\n" +
+                        "\"color\": \"" + color + "\",\n" +
+                        "\"height\": " + height + ",\n" +
+                        "\"material\": \"" + material + "\",\n" +
+                        "\"sound\": \"" + sound + "\",\n" +
+                        "\"wingsState\": \"" + wingsState + "\"\n" + "}"));
+    }
+
+    public void extractId(TestCaseRunner runner) {
+        runner.$(http()
+                .client(duckService)
+                .receive()
+                .response(HttpStatus.OK)
+                .message()
+                .extract(fromBody().expression("$.id", "duckId")));
+    }
+
+    public void deleteDuck(TestCaseRunner runner, String id){
+        runner.$(http()
+                .client(duckService)
+                .send()
+                .delete("/api/duck/delete")
+                .queryParam("id", id));
     }
 }

@@ -2,6 +2,7 @@ package autotests.clients;
 
 import autotests.EndpointConfig;
 import autotests.payloads.DuckMessage;
+import autotests.payloads.DuckSound;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.http.client.HttpClient;
 import com.consol.citrus.message.builder.ObjectMappingPayloadBuilder;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 
+import static com.consol.citrus.dsl.MessageSupport.MessageBodySupport.fromBody;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
 @ContextConfiguration(classes = {EndpointConfig.class})
@@ -20,12 +22,13 @@ public class DuckQuackClient extends TestNGCitrusSpringSupport {
     @Autowired
     protected HttpClient duckService;
 
-    public void duckQuack(TestCaseRunner runner, String id) {
-        runner.$(http()
-                .client(duckService)
+    public void duckQuack(TestCaseRunner runner, String id, String repetitionCount, String soundCount) {
+        runner.$(http().client("http://localhost:2222")
                 .send()
                 .get("/api/duck/action/quack")
-                .queryParam("id", id));
+                .queryParam("id", id)
+                .queryParam("repetitionCount", repetitionCount)
+                .queryParam("soundCount", soundCount));
     }
 
     public void duckQuackValidate(TestCaseRunner runner, String body) {
@@ -38,14 +41,14 @@ public class DuckQuackClient extends TestNGCitrusSpringSupport {
                 .body(body));
     }
 
-    public void duckQuackValidate(TestCaseRunner runner, DuckMessage duckMessage) {
+    public void duckQuackValidate(TestCaseRunner runner, DuckSound duckSound) {
         runner.$(http()
                 .client(duckService)
                 .receive()
                 .response(HttpStatus.OK)
                 .message()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(new ObjectMappingPayloadBuilder(duckMessage,
+                .body(new ObjectMappingPayloadBuilder(duckSound,
                         new ObjectMapper())));
     }
 
@@ -57,5 +60,30 @@ public class DuckQuackClient extends TestNGCitrusSpringSupport {
                 .message()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(new ClassPathResource(filePath)));
+    }
+
+    public void createDuck(TestCaseRunner runner, String color, double height, String material,
+                           String sound, String wingsState) {
+        runner.$(http()
+                .client(duckService)
+                .send()
+                .post("/api/duck/create")
+                .message()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body("{\n" +
+                        "\"color\": \"" + color + "\",\n" +
+                        "\"height\": " + height + ",\n" +
+                        "\"material\": \"" + material + "\",\n" +
+                        "\"sound\": \"" + sound + "\",\n" +
+                        "\"wingsState\": \"" + wingsState + "\"\n" + "}"));
+    }
+
+    public void extractId(TestCaseRunner runner) {
+        runner.$(http()
+                .client(duckService)
+                .receive()
+                .response(HttpStatus.OK)
+                .message()
+                .extract(fromBody().expression("$.id", "duckId")));
     }
 }

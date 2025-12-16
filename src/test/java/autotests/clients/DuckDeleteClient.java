@@ -6,8 +6,10 @@ import com.consol.citrus.http.client.HttpClient;
 import com.consol.citrus.testng.spring.TestNGCitrusSpringSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 
+import static com.consol.citrus.dsl.MessageSupport.MessageBodySupport.fromBody;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 
 @ContextConfiguration(classes = {EndpointConfig.class})
@@ -23,10 +25,38 @@ public class DuckDeleteClient extends TestNGCitrusSpringSupport {
                 .queryParam("id", id));
     }
 
-    public void deleteDuckValidate(TestCaseRunner runner){
+    public void deleteDuckValidate(TestCaseRunner runner, String id){
         runner.$(http()
                 .client(duckService)
                 .receive()
-                .response(HttpStatus.OK));
+                .response(HttpStatus.OK)
+                .message()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body("{\"message\":\"Duck with id = " + id + " is deleted\"}"));
+    }
+
+    public void extractId(TestCaseRunner runner) {
+        runner.$(http()
+                .client(duckService)
+                .receive()
+                .response(HttpStatus.OK)
+                .message()
+                .extract(fromBody().expression("$.id", "duckId")));
+    }
+
+    public void createDuck(TestCaseRunner runner, String color, double height, String material,
+                           String sound, String wingsState) {
+        runner.$(http()
+                .client(duckService)
+                .send()
+                .post("/api/duck/create")
+                .message()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body("{\n" +
+                        "\"color\": \"" + color + "\",\n" +
+                        "\"height\": " + height + ",\n" +
+                        "\"material\": \"" + material + "\",\n" +
+                        "\"sound\": \"" + sound + "\",\n" +
+                        "\"wingsState\": \"" + wingsState + "\"\n" + "}"));
     }
 }
