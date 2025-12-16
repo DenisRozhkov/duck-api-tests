@@ -34,6 +34,27 @@ public class DuckCreateTest extends TestNGCitrusSpringSupport {
                 + "\"\n" + "}");
     }
 
+    @Test(description = "Создание утки с material = wood ")
+    @CitrusTest
+    public void createMaterialWood(@Optional @CitrusResource TestCaseRunner runner) {
+        createDuck(runner, "yellow", 0.15, "wood", "quack", "ACTIVE");
+        duckCreateValidate(runner, "{\n"
+                + "  \"color\": \"" + "yellow" + "\",\n"
+                + "  \"height\": " + 0.15 + ",\n"
+                + "  \"material\": \"" + "wood" + "\",\n"
+                + "  \"sound\": \"" + "quack" + "\",\n"
+                + "  \"wingsState\": \"" + "ACTIVE"
+                + "\"\n" + "}");
+        duckProperties(runner,"${duckId}");
+        duckPropertiesValidate(runner,"{\n"
+                + "  \"color\": \"" + "yellow" + "\",\n"
+                + "  \"height\": " + 0.15 + ",\n"
+                + "  \"material\": \"" + "wood" + "\",\n"
+                + "  \"sound\": \"" + "quack" + "\",\n"
+                + "  \"wingsState\": \"" + "ACTIVE"
+                + "\"\n" + "}");
+    }
+
     public void createDuck(TestCaseRunner runner, String color, double height, String material,
                            String sound, String wingsState) {
         runner.$(http()
@@ -63,7 +84,8 @@ public class DuckCreateTest extends TestNGCitrusSpringSupport {
         runner.$(http()
                 .client("http://localhost:2222")
                 .send()
-                .get(id));
+                .get("/api/duck/action/properties")
+                .queryParam("id", id));
     }
 
     public void duckPropertiesValidate(TestCaseRunner runner, String body) {

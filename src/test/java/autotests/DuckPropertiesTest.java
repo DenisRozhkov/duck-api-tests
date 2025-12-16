@@ -20,7 +20,8 @@ public class DuckPropertiesTest extends TestNGCitrusSpringSupport {
         runner.$(http()
                 .client("http://localhost:2222")
                 .send()
-                .get(id));
+                .get("/api/duck/action/properties")
+                .queryParam("id", id));
     }
 
     public void duckPropertiesValidate(TestCaseRunner runner, String body) {

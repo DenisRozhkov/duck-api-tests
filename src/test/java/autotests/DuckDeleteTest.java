@@ -29,7 +29,10 @@ public class DuckDeleteTest extends TestNGCitrusSpringSupport {
         runner.$(http()
                 .client("http://localhost:2222")
                 .receive()
-                .response(HttpStatus.OK));
+                .response(HttpStatus.OK)
+                .message()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body("{\"message\":\"Duck with id = 1 is deleted\"}"));
     }
 
     public void createDuck(TestCaseRunner runner, String color, double height, String material,

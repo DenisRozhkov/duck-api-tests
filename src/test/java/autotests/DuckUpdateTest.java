@@ -72,7 +72,7 @@ public class DuckUpdateTest extends TestNGCitrusSpringSupport {
             id.set(Integer.parseInt(a.getVariable("duckId")));
         });
         duckUpdate(runner,"${duckId}","10","blue","rubber","quack");
-        duckUpdateValidate(runner,"{\"message\":\"Duck with id " + id.get() + " = 1 is updated\"}");
+        duckUpdateValidate(runner,"{\"message\":\"Duck with id " + "${duckId}" + " = 1 is updated\"}");
     }
 
     @Test
