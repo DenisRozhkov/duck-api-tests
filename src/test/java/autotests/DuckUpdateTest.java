@@ -44,6 +44,7 @@ public class DuckUpdateTest extends TestNGCitrusSpringSupport {
                 .send()
                 .post("/api/duck/create")
                 .message()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body("{\n" +
                         "\"color\": \"" + color + "\",\n" +
                         "\"height\": " + height + ",\n" +
@@ -67,12 +68,8 @@ public class DuckUpdateTest extends TestNGCitrusSpringSupport {
         // Изменение цвета и высоты уточки
         createDuck(runner, "yellow", 0.15, "rubber", "quack", "ACTIVE");
         extractId(runner);
-        AtomicInteger id = null;
-        runner.$(a -> {
-            id.set(Integer.parseInt(a.getVariable("duckId")));
-        });
         duckUpdate(runner,"${duckId}","10","blue","rubber","quack");
-        duckUpdateValidate(runner,"{\"message\":\"Duck with id " + "${duckId}" + " = 1 is updated\"}");
+        duckUpdateValidate(runner,"{\"message\":\"Duck with id = " + "${duckId}" + " is updated\"}");
     }
 
     @Test
@@ -81,11 +78,7 @@ public class DuckUpdateTest extends TestNGCitrusSpringSupport {
         // Изменение цвета и звука уточки
         createDuck(runner, "yellow", 0.15, "rubber", "quack", "ACTIVE");
         extractId(runner);
-        AtomicInteger id = null;
-        runner.$(a -> {
-            id.set(Integer.parseInt(a.getVariable("duckId")));
-        });
         duckUpdate(runner,"${duckId}","0.15","blue","rubber","krya");
-        duckUpdateValidate(runner,"{\"message\":\"Duck with id " + id.get() + " = 1 is updated\"}");
+        duckUpdateValidate(runner,"{\"message\":\"Duck with id = " + "${duckId}" + " is updated\"}");
     }
 }

@@ -39,6 +39,7 @@ public class DuckSwimTest extends TestNGCitrusSpringSupport {
                 .send()
                 .post("/api/duck/create")
                 .message()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body("{\n" +
                         "\"color\": \"" + color + "\",\n" +
                         "\"height\": " + height + ",\n" +
@@ -56,21 +57,30 @@ public class DuckSwimTest extends TestNGCitrusSpringSupport {
                 .extract(fromBody().expression("$.id", "duckId")));
     }
 
+    public void duckDelete(TestCaseRunner runner, String id) {
+        runner.$(http()
+                .client("http://localhost:2222")
+                .send()
+                .delete("/api/duck/delete")
+                .queryParam("id", id));
+    }
+
     @Test
     @CitrusTest
     public void swimExistingId(@Optional @CitrusResource TestCaseRunner runner) {
         // Существующий id
         createDuck(runner, "yellow", 0.15, "rubber", "quack", "ACTIVE");
         extractId(runner);
-        duckSwim(runner,"${duckId}");
-        duckSwimValidate(runner,"{\"message\":\"I'm swimming\"}");
+        duckSwim(runner, "${duckId}");
+        duckSwimValidate(runner, "{\"message\":\"I'm swimming\"}");
     }
 
     @Test
     @CitrusTest
     public void swimNonExistingId(@Optional @CitrusResource TestCaseRunner runner) {
         // Несуществующий id
-        duckSwim(runner,"999");
-        duckSwimValidate(runner,"{\"message\":\"Duck with id = 999 is not found\"}");
+        duckDelete(runner, "2");
+        duckSwim(runner, "2");
+        duckSwimValidate(runner, "{\"message\":\"Duck with id = 2 is not found\"}");
     }
 }

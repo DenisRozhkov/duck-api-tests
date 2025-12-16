@@ -62,6 +62,7 @@ public class DuckCreateTest extends TestNGCitrusSpringSupport {
                 .send()
                 .post("/api/duck/create")
                 .message()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body("{\n" +
                         "\"color\": \"" + color + "\",\n" +
                         "\"height\": " + height + ",\n" +

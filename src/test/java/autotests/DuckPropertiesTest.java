@@ -7,6 +7,7 @@ import com.consol.citrus.context.TestContext;
 import com.consol.citrus.testng.spring.TestNGCitrusSpringSupport;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.testng.Assert;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Test;
 
@@ -41,6 +42,7 @@ public class DuckPropertiesTest extends TestNGCitrusSpringSupport {
                 .send()
                 .post("/api/duck/create")
                 .message()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body("{\n" +
                         "\"color\": \"" + color + "\",\n" +
                         "\"height\": " + height + ",\n" +
@@ -62,7 +64,7 @@ public class DuckPropertiesTest extends TestNGCitrusSpringSupport {
     @CitrusTest
     public void getWoodDuckPropertiesEvenId(@Optional @CitrusResource TestCaseRunner runner) {
         // Четный ID: утка с material = wood
-        AtomicInteger id = null;
+        AtomicInteger id = new AtomicInteger();
         do{
             createDuck(runner, "yellow", 0.15, "wood", "quack", "ACTIVE");
             extractId(runner);
@@ -85,9 +87,9 @@ public class DuckPropertiesTest extends TestNGCitrusSpringSupport {
     @CitrusTest
     public void getRubberDuckPropertiesOddId(@Optional @CitrusResource TestCaseRunner runner) {
         // Нечетный ID: утка с material = rubber
-        AtomicInteger id = null;
+        AtomicInteger id = new AtomicInteger();
         do{
-            createDuck(runner, "yellow", 0.15, "wood", "quack", "ACTIVE");
+            createDuck(runner, "yellow", 0.15, "rubber", "quack", "ACTIVE");
             extractId(runner);
 
             runner.$(a -> {
@@ -98,7 +100,7 @@ public class DuckPropertiesTest extends TestNGCitrusSpringSupport {
         duckPropertiesValidate(runner,"{\n"
                 + "  \"color\": \"" + "yellow" + "\",\n"
                 + "  \"height\": " + 0.15 + ",\n"
-                + "  \"material\": \"" + "wood" + "\",\n"
+                + "  \"material\": \"" + "rubber" + "\",\n"
                 + "  \"sound\": \"" + "quack" + "\",\n"
                 + "  \"wingsState\": \"" + "ACTIVE"
                 + "\"\n" + "}");

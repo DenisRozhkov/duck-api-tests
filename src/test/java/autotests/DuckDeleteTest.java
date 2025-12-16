@@ -19,12 +19,7 @@ public class DuckDeleteTest extends TestNGCitrusSpringSupport {
     public void deleteDuck(@Optional @CitrusResource TestCaseRunner runner) {
         createDuck(runner, "yellow", 0.15, "rubber", "quack", "ACTIVE");
         extractId(runner);
-
-        runner.$(http()
-                .client("http://localhost:2222")
-                .send()
-                .delete("/api/duck/delete")
-                .queryParam("id", "${duckId}"));
+        duckDelete(runner,"${duckId}");
 
         runner.$(http()
                 .client("http://localhost:2222")
@@ -32,7 +27,7 @@ public class DuckDeleteTest extends TestNGCitrusSpringSupport {
                 .response(HttpStatus.OK)
                 .message()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body("{\"message\":\"Duck with id = 1 is deleted\"}"));
+                .body("{\"message\":\"Duck with id = " + "${duckId}" + " is deleted\"}"));
     }
 
     public void createDuck(TestCaseRunner runner, String color, double height, String material,
@@ -42,6 +37,7 @@ public class DuckDeleteTest extends TestNGCitrusSpringSupport {
                 .send()
                 .post("/api/duck/create")
                 .message()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body("{\n" +
                         "\"color\": \"" + color + "\",\n" +
                         "\"height\": " + height + ",\n" +
@@ -57,5 +53,13 @@ public class DuckDeleteTest extends TestNGCitrusSpringSupport {
                 .response(HttpStatus.OK)
                 .message()
                 .extract(fromBody().expression("$.id", "duckId")));
+    }
+
+    public void duckDelete(TestCaseRunner runner, String id) {
+        runner.$(http()
+                .client("http://localhost:2222")
+                .send()
+                .delete("/api/duck/delete")
+                .queryParam("id", id));
     }
 }

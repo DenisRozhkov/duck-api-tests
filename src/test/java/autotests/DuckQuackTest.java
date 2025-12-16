@@ -41,6 +41,7 @@ public class DuckQuackTest extends TestNGCitrusSpringSupport {
                 .send()
                 .post("/api/duck/create")
                 .message()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body("{\n" +
                         "\"color\": \"" + color + "\",\n" +
                         "\"height\": " + height + ",\n" +
@@ -62,7 +63,7 @@ public class DuckQuackTest extends TestNGCitrusSpringSupport {
     @CitrusTest
     public void quackOddId(@Optional @CitrusResource TestCaseRunner runner) {
         // Корректный нечётный id, корректный звук
-        AtomicInteger id = null;
+        AtomicInteger id = new AtomicInteger();
         do{
             createDuck(runner, "yellow", 0.15, "wood", "quack", "ACTIVE");
             extractId(runner);
@@ -79,7 +80,7 @@ public class DuckQuackTest extends TestNGCitrusSpringSupport {
     @CitrusTest
     public void quackEvenId(@Optional @CitrusResource TestCaseRunner runner) {
         // Корректный чётный id, корректный звук
-        AtomicInteger id = null;
+        AtomicInteger id = new AtomicInteger();
         do{
             createDuck(runner, "yellow", 0.15, "wood", "quack", "ACTIVE");
             extractId(runner);
